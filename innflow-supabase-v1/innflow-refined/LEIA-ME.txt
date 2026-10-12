@@ -1,0 +1,59 @@
+INNFLOW — PROTÓTIPO DEMONSTRATIVO
+
+O QUE ESTA VERSÃO INCLUI
+- Site público de demonstração com catálogo de acomodações e busca por datas/capacidade.
+- Validação das datas de entrada e saída e filtro de quartos com conflito de reserva nos dados locais.
+- Fluxo demonstrativo de solicitação de reserva, escolha da forma de pagamento preferida e consulta/cancelamento de reservas.
+- Cadastro/login demonstrativo de hóspedes; senhas de novas contas são derivadas com PBKDF2 no navegador, em vez de serem guardadas em texto puro. Isso NÃO transforma o login local em autenticação segura de produção.
+- Painel administrativo com reservas, quartos, hóspedes, financeiro e relatórios.
+- Exportação de registros para Excel (XLSX se a biblioteca estiver disponível; alternativa compatível com Excel se não estiver).
+- Página de apresentação comercial em /apresentacao.
+- Endpoint de verificação do servidor em /api/health.
+- Cabeçalhos básicos de segurança e validação de caminhos no servidor estático.
+- Layout responsivo para computador e celular.
+
+REQUISITOS E EXECUÇÃO
+- Node.js 18 ou mais recente.
+1. Extraia a pasta do ZIP.
+2. Abra a pasta no VS Code.
+3. No terminal, execute: node server.js
+4. Site de demonstração: http://localhost:3000
+5. Painel do gerente: http://localhost:3000/manager
+6. Apresentação comercial: http://localhost:3000/apresentacao
+7. Diagnóstico do servidor: http://localhost:3000/api/health
+
+LOGIN DE DEMONSTRAÇÃO DO GERENTE
+E-mail: gerente@innflow.local
+Senha: InnFlow2026!
+
+LIMITAÇÕES IMPORTANTES — LEIA ANTES DE APRESENTAR A CLIENTES
+Esta versão continua sendo um protótipo para demonstração e validação da ideia, não um sistema pronto para operar reservas reais.
+- Reservas, contas demonstrativas e quartos são armazenados no localStorage do navegador; não há banco de dados central nem sincronização entre dispositivos.
+- A senha fixa do gerente é somente uma credencial de demonstração. A autenticação administrativa não é validada por um servidor e não deve proteger dados reais.
+- O botão Google é demonstrativo: autenticação OAuth real exige configurar um projeto/cliente Google, URLs autorizadas, segredos no servidor e fluxo de autenticação real.
+- A forma de pagamento é apenas uma preferência registrada. Não há cobrança, processamento de cartão nem confirmação de Pix.
+- A exportação para Excel é local, baseada nos registros de demonstração existentes naquele navegador.
+- O endpoint /api/health apenas informa o estado do servidor de demonstração; não fornece banco de dados nem autenticação.
+- Os números ilustrativos da página /apresentacao são fictícios e não são dados reais do painel.
+- As imagens externas precisam de internet para carregar.
+
+ANTES DE USAR COM UMA EMPRESA OU HÓSPEDES REAIS
+1. Implementar backend com banco de dados central (por exemplo, PostgreSQL ou SQLite hospedado) e migrações.
+2. Criar autenticação segura no servidor, sessões protegidas, recuperação de senha e autorização por empresa/pousada.
+3. Separar e proteger os dados de cada empresa; validar permissões em todas as operações.
+4. Configurar OAuth Google com credenciais reais e URLs autorizadas.
+5. Integrar um provedor de pagamentos real, sem armazenar dados de cartão no InnFlow.
+6. Adicionar HTTPS, backups testados, logs, monitoramento, rate limiting e proteção contra abuso.
+7. Revisar privacidade, LGPD, termos, retenção e exclusão de dados.
+8. Testar concorrência de reservas, cancelamentos, fusos/datas, acessibilidade, celulares e restauração de backups.
+
+Não use dados pessoais reais nem publique este protótipo para reservas reais. A página de apresentação pode ser usada para mostrar o conceito e recolher feedback, deixando claro que o produto ainda está em desenvolvimento.
+
+NOVA ESTRUTURA SUPABASE (ETAPA INICIAL)
+- Migração PostgreSQL/RLS: supabase/migrations/202610120001_initial_schema.sql
+- Guia de configuração e testes: supabase/README.md
+- Configuração pública sem credenciais: public/supabase-config.js
+- Inicializador e adaptador: public/supabase-client.js e public/supabase-adapter.js
+- O adaptador é opcional e falha de forma explícita quando não há credenciais; o site local continua no modo demonstrativo.
+- Para configurar, siga o guia em supabase/README.md. Nunca exponha service_role, senha do banco ou segredos OAuth.
+- A interface de reservas e o painel ainda não foram migrados para usar o banco. Essa é a próxima etapa, depois de aplicar a migração e testar as políticas RLS em um projeto de desenvolvimento.
